@@ -9,7 +9,7 @@ library(targets)
 
 # Set target options:
 tar_option_set(
-  packages = c("tidyverse", "survival"),
+  packages = c("tidyverse", "survival", "data.table"),
   format = "qs", # Optionally set the default storage format. qs is fast.
   garbage_collection = TRUE
   # For distributed computing in tar_make(), supply a {crew} controller
@@ -22,7 +22,7 @@ tar_option_set(
   # Alternatively, if you want workers to run on a high-performance computing
   # cluster, select a controller from the {crew.cluster} package. The following
   # example is a controller for Sun Grid Engine (SGE).
-  # 
+  #
   #   controller = crew.cluster::crew_controller_sge(
   #     workers = 50,
   #     # Many clusters install R as an environment module, and you can load it
@@ -58,8 +58,8 @@ list(
     riskman_file,
     file.path(TABLES_UNPROCESSED_DIR, "RISKMAN_Falls.parquet")
   ),
-  
-  
+
+
   # data
   tar_target(
     d_encounters,
@@ -74,7 +74,64 @@ list(
     create_tdc_data(
       encounters = d_encounters,
       riskman = d_riskman,
-      time_hours_split = TIME_HOURS_SPLIT
+      time_hours_split = TIME_HOURS_SPLIT,
+      hours_max_stay = HOURS_MAX_STAY
+    )
+  ),
+
+  # models
+  tar_target(
+    model1,
+    fit_fold_model(
+      d_model,
+      formula = MODEL_FORMULA,
+      valid_fold = 1
+    )
+  ),
+  tar_target(
+    model2,
+    fit_fold_model(
+      d_model,
+      formula = MODEL_FORMULA,
+      valid_fold = 2
+    )
+  ),
+  tar_target(
+    model3,
+    fit_fold_model(
+      d_model,
+      formula = MODEL_FORMULA,
+      valid_fold = 3
+    )
+  ),
+  tar_target(
+    model4,
+    fit_fold_model(
+      d_model,
+      formula = MODEL_FORMULA,
+      valid_fold = 4
+    )
+  ),
+  tar_target(
+    model5,
+    fit_fold_model(
+      d_model,
+      formula = MODEL_FORMULA,
+      valid_fold = 5
+    )
+  ),
+  tar_target(
+    all_models,
+    list(model1, model2, model3, model4, model5)
+  ),
+
+
+  # time-dependent ROCs
+  tar_target(
+    trocs,
+    get_trocs(
+      model_list = all_models,
+      days = DAYS_TROC
     )
   )
 )

@@ -14,7 +14,7 @@ read_encounters <- function(file) {
       time_deceased = ifelse(status_deceased == 1, deceased_dt, NA_POSIXct_),
       time_deceased = as.POSIXct.numeric(time_deceased, origin = "1970-01-01"),
       end_dt = ifelse(
-        !is.na(time_deceased) & are_posixct_same_date(time_deceased,disch_dt),
+        !is.na(time_deceased) & are_posixct_same_date(time_deceased, disch_dt),
         time_deceased,
         disch_dt
       ),
