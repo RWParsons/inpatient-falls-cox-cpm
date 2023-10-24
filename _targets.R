@@ -37,7 +37,7 @@ tar_option_set(
 
 # tar_make_clustermq() is an older (pre-{crew}) way to do distributed computing
 # in {targets}, and its configuration for your machine is below.
-options(clustermq.scheduler = "multiprocess")
+options(clustermq.scheduler = "multicore")
 
 # tar_make_future() is an older (pre-{crew}) way to do distributed computing
 # in {targets}, and its configuration for your machine is below.
@@ -69,7 +69,6 @@ list(
     d_riskman,
     read_riskman(riskman_file)
   ),
-  
   tar_target(
     d_model,
     create_tdc_data(
@@ -77,17 +76,5 @@ list(
       riskman = d_riskman,
       time_hours_split = TIME_HOURS_SPLIT
     )
-  ),
-  
-  
-  
-  tar_target(
-    name = data,
-    command = tibble(x = rnorm(100), y = rnorm(100))
-    # format = "feather" # efficient storage for large data frames
-  ),
-  tar_target(
-    name = model,
-    command = coefficients(lm(y ~ x, data = data))
   )
 )

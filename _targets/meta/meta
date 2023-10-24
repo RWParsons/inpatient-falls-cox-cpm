@@ -3,16 +3,16 @@ admit_src_cats|object|7ff93ee858d90fb9|||||||||||||||
 are_posixct_same_date|function|ee841d666bf45b17|||||||||||||||
 convert_to_AEST|function|a00a98f27654a602|||||||||||||||
 create_tdc_data|function|c119baa81f7121ce|||||||||||||||
-d_encounters|stem|5b59ac601f003128|14570b61daf99f03|6fed7adf61d507bc|-1337418212||t19654.0451303935s|53faf02366639c34|36882403|qs|local|vector|||95.08||
-d_model|stem|d24d01b3396307d9|50f78fde2a17c950|2d3417860318a39b|1725336152||t19654.0476516159s|f33848c35ba25819|59400237|qs|local|vector|||92.06||
-d_riskman|stem|c7f2430c05da6104|81715f4ef158e961|5759c2621bcac1fe|-575854837||t19654.0345090895s|52808f6920272dad|79237|qs|local|vector|||0.98||
-data|stem|b9724054ee083a3e|43fae4011a0626f4|ef46db3751d8e999|1588979285||t19654.0251351121s|91a33ba597ead598|1604|qs|local|vector|||0|package tibble was built under R version 4.2.3|
+d_encounters|stem|5b59ac601f003128|14570b61daf99f03|6fed7adf61d507bc|-1337418212||t19654.2394707544s|53faf02366639c34|36882403|qs|local|vector|||93.69||
+d_model|stem|d24d01b3396307d9|50f78fde2a17c950|2d3417860318a39b|1725336152||t19654.2403736446s|f33848c35ba25819|59400237|qs|local|vector|||74.98||
+d_riskman|stem|c7f2430c05da6104|81715f4ef158e961|5759c2621bcac1fe|-575854837||t19654.2383766667s|52808f6920272dad|79237|qs|local|vector|||1.45||
+data|stem|b9724054ee083a3e|43fae4011a0626f4|ef46db3751d8e999|1588979285||t19654.2383581344s|91a33ba597ead598|1604|qs|local|vector|||0||
 encounters_file|stem|7ac1dd053b6d694d|a9afbdaa1eecf01b|1ace38bcf8f3ba2e|1328927069|U:/Research/Projects/ihbi/aushsi/aushsi_students/inpatient_falls_RP/data/Falls/Encounters_Data.parquet|t19102.9743660463s|8692b686704edd5c|46211942|file|local|vector|||0.01|package tibble was built under R version 4.2.3|
 fx_med_service|function|5bb88a218c5ea9f5|||||||||||||||
 fx_visit_reason|function|bad8084c961e047e|||||||||||||||
-model|stem|00f0e43d43ff1a5a|ae83bc723fe2997c|eaba6bd174f49b10|1816327236||t19654.0251361634s|abbdb7fe746336f0|76|qs|local|vector|||0||
+model|stem|00f0e43d43ff1a5a|ae83bc723fe2997c|eaba6bd174f49b10|1816327236||t19654.2394770708s|abbdb7fe746336f0|76|qs|local|vector|||0||
 read_encounters|function|14edd965447377ee|||||||||||||||
 read_riskman|function|098d7a271db45450|||||||||||||||
-riskman_file|stem|7a3e195b4dc960fc|e6282aa7bcdca3bd|1ace38bcf8f3ba2e|382934515||t19654.0296376552s|7dead8e41ac4f62d|130|qs|local|vector|||0.01|package tibble was built under R version 4.2.3|
+riskman_file|stem|7a3e195b4dc960fc|e6282aa7bcdca3bd|1ace38bcf8f3ba2e|382934515||t19654.2382854524s|7dead8e41ac4f62d|130|qs|local|vector|||1.23||
 TABLES_UNPROCESSED_DIR|object|e11d972fa619ad8a|||||||||||||||
 TIME_HOURS_SPLIT|object|c476f3c65cb413c0|||||||||||||||
