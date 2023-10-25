@@ -11,3 +11,5 @@ MODEL_FORMULA <- Surv(tstart, tstop, fall) ~
 FOLD_COLOURS <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e")
 
 DAYS_TROC <- 1:7
+
+OUT_DIR <- here::here("output")

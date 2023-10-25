@@ -176,7 +176,18 @@ list(
     )
   ),
   tar_target(
-    trocs,
-    list(d1_troc, d2_troc, d3_troc, d4_troc, d5_troc, d6_troc, d7_troc)
+    troc_fig,
+    make_model_discrimination_fig(
+      trocs = list(
+        d1_troc, 
+        d2_troc, 
+        d3_troc, 
+        d4_troc, 
+        d5_troc, 
+        d6_troc, 
+        d7_troc
+      )
+    ),
+    format = "file"
   )
 )
