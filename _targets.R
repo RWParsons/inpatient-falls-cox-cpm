@@ -125,13 +125,58 @@ list(
     list(model1, model2, model3, model4, model5)
   ),
 
-
   # time-dependent ROCs
   tar_target(
-    trocs,
-    get_trocs(
+    d1_troc,
+    make_troc(
       model_list = all_models,
-      days = DAYS_TROC
+      day = 1
     )
+  ),
+  tar_target(
+    d2_troc,
+    make_troc(
+      model_list = all_models,
+      day = 2
+    )
+  ),
+  tar_target(
+    d3_troc,
+    make_troc(
+      model_list = all_models,
+      day = 3
+    )
+  ),
+  tar_target(
+    d4_troc,
+    make_troc(
+      model_list = all_models,
+      day = 4
+    )
+  ),
+  tar_target(
+    d5_troc,
+    make_troc(
+      model_list = all_models,
+      day = 5
+    )
+  ),
+  tar_target(
+    d6_troc,
+    make_troc(
+      model_list = all_models,
+      day = 6
+    )
+  ),
+  tar_target(
+    d7_troc,
+    make_troc(
+      model_list = all_models,
+      day = 7
+    )
+  ),
+  tar_target(
+    trocs,
+    list(d1_troc, d2_troc, d3_troc, d4_troc, d5_troc, d6_troc, d7_troc)
   )
 )

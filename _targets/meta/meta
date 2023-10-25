@@ -4,6 +4,7 @@ d_encounters|stem|5b59ac601f003128|14570b61daf99f03|6fed7adf61d507bc|-1337418212
 d_model|stem|90f0ff62a2fc413e|990a0d3fbdf2c615|f4d9a5fa16185de0|1725336152||t19654.4640602454s|495560f2f66a057b|58602968|qs|local|vector|||75.64||
 d_riskman|stem|c7f2430c05da6104|81715f4ef158e961|5759c2621bcac1fe|-575854837||t19654.2383766667s|52808f6920272dad|79237|qs|local|vector|||1.45||
 d1_troc|stem||e10ac0f3f3172c38|69d6612b7576b501|-519561473||t19654.5302634379s||0|qs|local|vector|||0||could not find function make_troc
+d3_troc|stem||f315f69caa7587c8|a237c292195f6d1e|-900540302||t19654.9625448905s||0|qs|local|vector|||0||unused argument model_list  all_models
 data|stem|b9724054ee083a3e|43fae4011a0626f4|ef46db3751d8e999|1588979285||t19654.2383581344s|91a33ba597ead598|1604|qs|local|vector|||0||
 encounters_file|stem|7ac1dd053b6d694d|a9afbdaa1eecf01b|1ace38bcf8f3ba2e|1328927069|U:/Research/Projects/ihbi/aushsi/aushsi_students/inpatient_falls_RP/data/Falls/Encounters_Data.parquet|t19102.9743660463s|8692b686704edd5c|46211942|file|local|vector|||0.01|package tibble was built under R version 4.2.3|
 eval_model|function|617fbab873b7e377|||||||||||||||
@@ -38,9 +39,9 @@ ci.cvAUC|function|8bb5b75370e8d2f2|||||||||||||||
 read_riskman|function|098d7a271db45450|||||||||||||||
 read_encounters|function|14edd965447377ee|||||||||||||||
 create_tdc_data|function|858c6a190cf6882a|||||||||||||||
-make_plot_troc_day|function|ea4f7553e82ec008|||||||||||||||
-make_troc|function|b2d26fbab1147109|||||||||||||||
-get_trocs|function|b0b9445bedf4504c|||||||||||||||
+make_plot_troc_day|function|7bc7a91537e4f557|||||||||||||||
+make_troc|function|2864db43b3b72ba8|||||||||||||||
+get_trocs|function|082161dfaf5362aa|||||||||||||||
 get_preds|function|f3d2f0e9a68f19a6
 TIME_HOURS_SPLIT|object|c476f3c65cb413c0
 fx_med_service|function|5bb88a218c5ea9f5
@@ -61,6 +62,6 @@ ci.cvAUC|function|8bb5b75370e8d2f2
 read_riskman|function|098d7a271db45450
 read_encounters|function|14edd965447377ee
 create_tdc_data|function|858c6a190cf6882a
-make_plot_troc_day|function|ea4f7553e82ec008
-make_troc|function|b2d26fbab1147109
-get_trocs|function|b0b9445bedf4504c
+make_plot_troc_day|function|7bc7a91537e4f557
+make_troc|function|2864db43b3b72ba8
+get_trocs|function|082161dfaf5362aa

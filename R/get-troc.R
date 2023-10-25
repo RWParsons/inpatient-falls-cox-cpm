@@ -1,12 +1,6 @@
-get_trocs <- function(model_list, days) {
+make_troc <- function(model_list, day) {
   valid_df_list <- lapply(model_list, "[[", "valid")
-
-  lapply(days, \(d) {
-    make_troc(valid_df_list = valid_df_list, day = d)
-  })
-}
-
-make_troc <- function(valid_df_list, day) {
+  
   valid_dfs_combined <- na.omit(do.call("rbind", valid_df_list))
   auc_res <- with(valid_dfs_combined, ci.cvAUC(
     predictions = pred_neg_risk, # should be predicted risk (see `marker` in `survivalROC::survivalROC()`)
