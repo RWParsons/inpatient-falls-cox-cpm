@@ -1,5 +1,5 @@
 read_encounters <- function(file) {
-  arrow::read_parquet(file = file) |>
+  df_encounters <- arrow::read_parquet(file = file) |>
     select(
       pt_id = Enc_Person_ID, enc_id = Enc_Encntr_ID, enc_mrn = Enc_MRN, visit_reason = REASON_FOR_VISIT,
       sex = SEX, age = Age, admit_type = ADMIT_TYPE, admit_src = ADMIT_SRC,
@@ -8,7 +8,7 @@ read_encounters <- function(file) {
       admit_dt = REG_DT_TM, disch_dt = DISCH_DT_TM, deceased_dt = DECEASED_DT_TM
     ) |>
     mutate(across(where(is.POSIXct), convert_to_AEST)) |>
-    filter(admit_dt < disch_dt) |>
+    filter(admit_dt < disch_dt, year(admit_dt) %in% 2018:2021) |>
     mutate(
       status_deceased = as.integer((disch_dest == "Died in Hospital") & (as.Date(deceased_dt) <= as.Date(disch_dt))),
       time_deceased = ifelse(status_deceased == 1, deceased_dt, NA_POSIXct_),
@@ -23,6 +23,14 @@ read_encounters <- function(file) {
       time_end = as.numeric(difftime(disch_dt, admit_dt, units = "hours"))
     ) |>
     select(-all_of(c("deceased_dt", "disch_dt", "time_deceased")))
+
+  folds_by_n_patients <- df_encounters |>
+    group_by(facility) |>
+    summarize(n = n()) |>
+    arrange(desc(n)) |>
+    mutate(fold = row_number())
+
+  left_join(df_encounters, folds_by_n_patients, by = "facility")
 }
 
 

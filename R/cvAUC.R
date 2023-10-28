@@ -12,13 +12,15 @@ ci.cvAUC <- function(predictions, # should be predicted risk (see `marker` in `s
     survivalROCfx <- survivalROC::survivalROC
   }
 
-
   # Pre-process the input
   clean <- .process_input(
-    predictions = predictions, labels = labels,
+    predictions = predictions,
+    labels = labels,
     tstop = tstop,
-    label.ordering = label.ordering, folds = folds,
-    ids = NULL, confidence = confidence
+    label.ordering = label.ordering,
+    folds = folds,
+    ids = NULL,
+    confidence = confidence
   )
 
   predictions <- clean$predictions # Length-V list of predicted values
@@ -62,7 +64,10 @@ ci.cvAUC <- function(predictions, # should be predicted risk (see `marker` in `s
       w0 * (fracPosLabelsWithLargerPreds - auc)
     )]
 
-    return(list(s = mean(DT$icVal^2), roc_obj = roc_obj))
+    list(
+      s = mean(DT$icVal^2),
+      roc_obj = roc_obj
+    )
   }
 
   roc_outputs <- mapply(
@@ -92,7 +97,13 @@ ci.cvAUC <- function(predictions, # should be predicted risk (see `marker` in `s
   ci_cvauc[1] <- ifelse(ci_cvauc[1] < 0, 0, ci_cvauc[1]) # Truncate CI at [0,1]
   ci_cvauc[2] <- ifelse(ci_cvauc[2] > 1, 1, ci_cvauc[2])
 
-  return(list(cvAUC = cvauc, se = se, ci = ci_cvauc, confidence = confidence, roc_objects = roc_outputs[2, ]))
+  list(
+    cvAUC = cvauc,
+    se = se,
+    ci = ci_cvauc,
+    confidence = confidence,
+    roc_objects = roc_outputs[2, ]
+  )
 }
 
 .process_input <- function(predictions,
@@ -103,7 +114,7 @@ ci.cvAUC <- function(predictions, # should be predicted risk (see `marker` in `s
                            ids = NULL,
                            confidence = NULL) {
   .vec_to_list <- function(idxs, vec) {
-    return(vec[idxs])
+    vec[idxs]
   }
   if (!is.null(folds)) {
     if (class(predictions) == "list" | class(labels) == "list") {
@@ -165,11 +176,11 @@ ci.cvAUC <- function(predictions, # should be predicted risk (see `marker` in `s
       }
     }
   }
-  return(list(
+  list(
     predictions = predictions,
     labels = labels,
     tstop = tstop,
     folds = folds,
     ids = ids
-  ))
+  )
 }

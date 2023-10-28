@@ -5,43 +5,13 @@
 
 # Load packages required to define the pipeline:
 library(targets)
-# library(tarchetypes) # Load other packages as needed.
 
 # Set target options:
 tar_option_set(
-  packages = c("tidyverse", "survival", "data.table"),
+  packages = c("tidyverse", "survival", "data.table", "flextable"),
   format = "qs", # Optionally set the default storage format. qs is fast.
   garbage_collection = TRUE
-  # For distributed computing in tar_make(), supply a {crew} controller
-  # as discussed at https://books.ropensci.org/targets/crew.html.
-  # Choose a controller that suits your needs. For example, the following
-  # sets a controller with 2 workers which will run as local R processes:
-  #
-  #   controller = crew::crew_controller_local(workers = 2)
-  #
-  # Alternatively, if you want workers to run on a high-performance computing
-  # cluster, select a controller from the {crew.cluster} package. The following
-  # example is a controller for Sun Grid Engine (SGE).
-  #
-  #   controller = crew.cluster::crew_controller_sge(
-  #     workers = 50,
-  #     # Many clusters install R as an environment module, and you can load it
-  #     # with the script_lines argument. To select a specific verison of R,
-  #     # you may need to include a version string, e.g. "module load R/4.3.0".
-  #     # Check with your system administrator if you are unsure.
-  #     script_lines = "module load R"
-  #   )
-  #
-  # Set other options as needed.
 )
-
-# tar_make_clustermq() is an older (pre-{crew}) way to do distributed computing
-# in {targets}, and its configuration for your machine is below.
-options(clustermq.scheduler = "multicore")
-
-# tar_make_future() is an older (pre-{crew}) way to do distributed computing
-# in {targets}, and its configuration for your machine is below.
-# Install packages {{future}}, {{future.callr}}, and {{future.batchtools}} to allow use_targets() to configure tar_make_future() options.
 
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source()
@@ -124,69 +94,118 @@ list(
     all_models,
     list(model1, model2, model3, model4, model5)
   ),
+  tar_target(
+    final_model,
+    coxph(MODEL_FORMULA, d_model)
+  ),
 
   # time-dependent ROCs
+  ## cued as never because they take ages to create and I spent time cleaning up
+  ## code for preceding targets
   tar_target(
     d1_troc,
     make_troc(
       model_list = all_models,
       day = 1
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d2_troc,
     make_troc(
       model_list = all_models,
       day = 2
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d3_troc,
     make_troc(
       model_list = all_models,
       day = 3
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d4_troc,
     make_troc(
       model_list = all_models,
       day = 4
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d5_troc,
     make_troc(
       model_list = all_models,
       day = 5
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d6_troc,
     make_troc(
       model_list = all_models,
       day = 6
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     d7_troc,
     make_troc(
       model_list = all_models,
       day = 7
-    )
+    ),
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     troc_fig,
     make_model_discrimination_fig(
       trocs = list(
-        d1_troc, 
-        d2_troc, 
-        d3_troc, 
-        d4_troc, 
-        d5_troc, 
-        d6_troc, 
+        d1_troc,
+        d2_troc,
+        d3_troc,
+        d4_troc,
+        d5_troc,
+        d6_troc,
         d7_troc
       )
+    ),
+    format = "file"
+  ),
+  tar_target(
+    calibration_fig,
+    make_model_calibration_fig(
+      model_list = all_models
+    ),
+    format = "file"
+  ),
+
+  # make tables
+  tar_target(
+    d_short,
+    make_short_data(data = d_model)
+  ),
+  tar_target(
+    supp_power_by_fold_table,
+    get_supp_power_by_fold_table(
+      data = d_short,
+      all_models = all_models
+    ),
+    format = "file"
+  ),
+  tar_target(
+    summary_table,
+    get_summary_table(
+      data = d_short
+    ),
+    format = "file"
+  ),
+  tar_target(
+    model_parm_table,
+    make_model_parm_table(
+      data = d_model,
+      final_model = final_model
     ),
     format = "file"
   )

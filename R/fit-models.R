@@ -11,6 +11,7 @@ fit_fold_model <- function(data, formula, valid_fold) {
     }
   }
 
+  # NOTE: running with_environment() prevents bug where it can't find 'train'
   withr::with_environment(env = environment(), {
     preds <- get_preds(model, valid)
   })

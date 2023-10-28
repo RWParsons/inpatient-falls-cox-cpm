@@ -4,13 +4,6 @@ create_tdc_data <- function(encounters,
                             hours_max_stay) {
   d_falls <- filter(riskman, enc_id %in% encounters$enc_id)
 
-  fold_lookup <- encounters |>
-    group_by(facility) |>
-    summarize(n = n()) |>
-    arrange(desc(n)) |>
-    mutate(fold = row_number()) |>
-    select(-n)
-
   encs <- encounters |>
     select(-all_of(c("pt_id", "enc_mrn", "disch_dest", "status_deceased", "end_dt", "time_start"))) |>
     distinct() |>
@@ -31,8 +24,7 @@ create_tdc_data <- function(encounters,
           units = "days"
         ) / 365.25
       )
-    ) |>
-    left_join(fold_lookup, by = "facility")
+    )
 
 
   d_fall_times <- d_falls |>
