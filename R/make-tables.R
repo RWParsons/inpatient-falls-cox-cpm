@@ -80,9 +80,17 @@ get_supp_power_by_fold_table <- function(data, all_models) {
     rownames_to_column(var = "fold") |>
     add_column(model_params = c(model_params, final_model_params)) |>
     mutate(
-      events_per_param = round(falls_n / model_params),
-      fold = ifelse(fold == "All", "Full Model", fold)
+      `Events per parameter` = round(falls_n / model_params),
+      Model = ifelse(fold == "All", "Full", paste0("Fold: ", fold))
     ) |>
+    relocate(Model, .before = everything()) |> 
+    rename(
+      Patients = patients, 
+      `Patient days` = patient_days,
+      `Falls (n)` = falls_n,
+      `Model parameters (n)` = model_params
+    ) |> 
+    select(-fold) |> 
     flextable() |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-power-by-fold.docx"))
 
@@ -124,15 +132,40 @@ get_summary_table <- function(data) {
       measure = str_remove(name, glue(".*{varname}_"))
     ) |>
     select(fold, varname, measure, value)
-
+# 
   demographics_data |>
     bind_rows(
       f_cat_counts(data, "med_service"),
       f_cat_counts(data, "admit_src")
     ) |>
+    mutate(
+      varname = case_when(
+        varname == "med_service" ~ "Medical Service",
+        varname == "admit_src" ~ "Admission Source",
+        varname == "pat" ~ "Admitted patients",
+        varname == "female" ~ "Female",
+        varname == "falls" ~ "Falls",
+        varname == "age" ~ "Age",
+        varname == "los" ~ "Length of stay",
+        .default = varname
+      ),
+      measure = case_when(
+        measure == "count" ~ "Count",
+        measure == "days" ~ "Days",
+        measure == "count_perc" ~ "Count (%)",
+        measure == "medn_iqr" ~ "Median (IQR)",
+        measure == "n" ~ "Count",
+        measure == "fallers" ~ "Fallers",
+        measure == "falls" ~ "Falls",
+        .default = measure
+      ),
+      fold = ifelse(fold != "All", paste0("Hospital_", fold), fold)
+    ) |> 
     pivot_wider(names_from = "fold", values_from = "value") |>
+    rename(Measure = measure, Variable = varname) |> 
     flextable() |>
-    merge_v(j = ~varname) |>
+    merge_v(j = ~Variable) |> 
+    separate_header() |> 
     save_as_docx(path = file.path(OUT_DIR, "tbl-summary.docx"))
 
   file.path(OUT_DIR, "tbl-summary.docx")
@@ -173,6 +206,15 @@ f_cat_counts <- function(.data, col, val_min = 100) {
     group_by(fold, !!rlang::sym(col)) |>
     summarize(n = n()) |>
     ungroup() |>
+    (\(d) {
+      d_all <- filter(d, fold == "All") |> 
+        arrange(desc(n))
+      
+      levels <- c(d_all[[2]][d_all[[2]] != "other"], "other")
+      d[[2]] <- factor(d[[2]], levels = levels)
+      d
+    })() |> 
+    arrange(!!rlang::sym(col)) |> 
     pivot_wider(names_from = all_of(col), values_from = "n") |>
     mutate(across(
       !all_of("fold"),
@@ -180,6 +222,9 @@ f_cat_counts <- function(.data, col, val_min = 100) {
     )) |>
     pivot_longer(!fold) |>
     add_column(varname = col) |>
-    mutate(measure = glue("{name} (count)")) |>
+    mutate(
+      measure = glue("{name} (count)"),
+      measure = str_to_sentence(measure)
+    ) |>
     select(-name)
 }

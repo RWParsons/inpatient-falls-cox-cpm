@@ -94,13 +94,13 @@ make_plot_troc_day <- function(troc, predict_day) {
     theme_bw() +
     theme(panel.grid.minor = element_blank()) +
     labs(
-      col = "Cross-validation fold (AUC)",
-      linetype = "Cross-validation fold (AUC)",
+      col = "Fold (AUC)",
+      linetype = "Fold (AUC)",
       title = glue("Time-dependent ROC (Day {predict_day})"),
       x = "1 - Specificity",
       y = "Sensitivity",
       caption = glue(
-        "(internal-externally) cross-validated AUC: {format(round(troc$cvAUC, 3), nsmall = 3)}\n",
+        "(Internally-externally validated) AUC: {format(round(troc$cvAUC, 3), nsmall = 3)}\n",
         "(95% CI: {paste0(format(round(troc$ci, 3), nsmall = 3), collapse = ' - ')})"
       )
     ) +
@@ -140,7 +140,7 @@ make_plot_troc_series <- function(trocs) {
     (\(x) do.call("rbind", x))() |>
     mutate(group = factor(group, levels = c(1:5, "Combined")))
 
-  legend_lab <- "Cross-validation fold"
+  legend_lab <- "Fold"
 
   troc_df |>
     ggplot(
