@@ -1,8 +1,14 @@
 make_model_parm_table <- function(data, final_model) {
   cbind(final_model$coefficients, confint(final_model)) |>
+    cbind(
+      exp(cbind(final_model$coefficients, confint(final_model)))
+    ) |>
     as.data.frame() |>
     (\(x) {
-      names(x) <- c("Estimate", "ci_95_ll", "ci_95_ul")
+      names(x) <- c(
+        "Estimate", "ci_95_ll", "ci_95_ul",
+        "Hazard ratio", "ci_hr_95_ll", "ci_hr_95_ul"
+      )
       x
     })() |>
     rownames_to_column(var = "Parameter") |>
@@ -13,11 +19,14 @@ make_model_parm_table <- function(data, final_model) {
     mutate(
       across(!Parameter, function(v) format(round(v, 4), nsmall = 4)),
       `95% Confidence Interval` = glue("({ci_95_ll}, {ci_95_ul})"),
-      Parameter = str_replace(Parameter, "admit_src", "admit_src ["),
-      Parameter = str_replace(Parameter, "med_service", "med_service ["),
+      `95% Confidence Interval ` = glue("({ci_hr_95_ll}, {ci_hr_95_ul})"),
+      Parameter = clean_term(Parameter),
+      Parameter = str_replace(Parameter, "Admission source", "Admission source ["),
+      Parameter = str_replace(Parameter, "Medical service", "Medical service ["),
       Parameter = ifelse(str_detect(Parameter, "\\["), paste0(Parameter, "]"), Parameter)
     ) |>
     select(-starts_with("ci")) |>
+    relocate("Hazard ratio", .before = last_col()) |>
     flextable() |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-model-coefs.docx"))
 
@@ -26,6 +35,7 @@ make_model_parm_table <- function(data, final_model) {
     (\(x) x[str_detect(x, "rcs\\(")])() |>
     str_extract("^.*\\)") |>
     unique()
+
 
   lapply(
     rcs_terms,
@@ -43,15 +53,36 @@ make_model_parm_table <- function(data, final_model) {
     mutate(Term = str_extract(rcs_terms, "(?<=\\().*(?=,)")) |>
     remove_rownames() |>
     select(Term, everything()) |>
-    mutate(across(everything(), \(x) ifelse(is.na(x), "", x))) |>
-    (\(df) {
-      names(df)[2:ncol(df)] <- paste("Knot", 1:(ncol(df) - 1))
-      df
-    })() |>
-    flextable() |>
+    pivot_longer(!Term, names_to = "Knot Number", values_to = "Knot Location") |>
+    na.omit() |>
+    mutate(
+      `Knot Number` = str_replace(`Knot Number`, "V", ""),
+      Term = clean_term(Term)
+    ) |>
+    group_by(Term) |>
+    mutate(is_last_val_in_group = row_number() == max(row_number())) |>
+    flextable(col_keys = c(
+      "Term", "Knot Number", "Knot Location"
+    )) |>
+    merge_v(j = ~Term) |>
+    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-knot-locations.docx"))
 
   file.path(OUT_DIR, c("tbl-knot-locations.docx", "tbl-model-coefs.docx"))
+}
+
+clean_term <- function(x) {
+  x |>
+    str_replace("female", "Female") |>
+    str_replace("age", "Age (years)") |>
+    str_replace("years_since_2018", "Time since 2018 (years)") |>
+    str_replace("tstart", "Time since admission (hours)") |>
+    str_replace("admit_src", "Admission source") |>
+    str_replace("med_service", "Medical service") |>
+    str_replace("prev_falls", "Previous falls (n)") |>
+    str_replace("[p,P]sych(?=[), \\]])", "Psychiatry") |>
+    str_replace("psych$", "Psychiatry") |>
+    str_replace("other$", "Other")
 }
 
 
@@ -65,10 +96,11 @@ get_supp_power_by_fold_table <- function(data, all_models) {
   final_model_params <- max(model_params)
 
   data |>
+    mutate(max_time = ifelse(time_end > HOURS_MAX_STAY, HOURS_MAX_STAY, time_end)) |>
     group_by(fold) |>
     summarize(
       patients = n(),
-      patient_days = round(sum(time_end - tstop) / 24),
+      patient_days = round(sum((max_time - tstart) / 24)),
       falls_n = sum(falls_n)
     ) |>
     column_to_rownames(var = "fold") |>
@@ -81,17 +113,23 @@ get_supp_power_by_fold_table <- function(data, all_models) {
     add_column(model_params = c(model_params, final_model_params)) |>
     mutate(
       `Events per parameter` = round(falls_n / model_params),
-      Model = ifelse(fold == "All", "Full", paste0("Fold: ", fold))
+      Model = ifelse(fold == "All", "Final", paste0("Fold: ", fold))
     ) |>
-    relocate(Model, .before = everything()) |> 
+    relocate(Model, .before = everything()) |>
     rename(
-      Patients = patients, 
-      `Patient days` = patient_days,
+      `Inpatient admissions` = patients,
+      `Patient days (truncated at 14 days)` = patient_days,
       `Falls (n)` = falls_n,
       `Model parameters (n)` = model_params
-    ) |> 
-    select(-fold) |> 
+    ) |>
+    select(-fold) |>
     flextable() |>
+    footnote(
+      i = 1, j = 1,
+      ref_symbols = "*",
+      value = as_paragraph("Model represents the cross-validation fold models and the final model fit with all patient data. The fold models are those fit during internal-external cross-validation and incorporate all patient data except for the associated hospital of the same number. For example, the 'Fold: 1' model was fit using patient data from hospitals 2 to 5, with hospital 1 being the validation set."),
+      part = "header"
+    ) |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-power-by-fold.docx"))
 
   file.path(OUT_DIR, "tbl-power-by-fold.docx")
@@ -103,7 +141,12 @@ get_summary_table <- function(data) {
     group_by(fold) %>%
     summarize(
       grp_pat_count = n(),
-      grp_pat_days = format_count(round(sum(time_end - tstop) / 24)),
+      grp_pat_days = format_count(round(sum(time_end - tstart) / 24)),
+      grp_pat_days_truncated = format_count(
+        round(sum(
+          ifelse(time_end > HOURS_MAX_STAY, HOURS_MAX_STAY, time_end) - tstart
+        ) / 24)
+      ),
       grp_female_count_perc = glue("{format_count(round(mean(female) * n()))} ({scales::percent(mean(female))})"),
       grp_falls_n = format_count(sum(falls_n)),
       grp_falls_fallers = (\(x) {
@@ -132,7 +175,7 @@ get_summary_table <- function(data) {
       measure = str_remove(name, glue(".*{varname}_"))
     ) |>
     select(fold, varname, measure, value)
-# 
+
   demographics_data |>
     bind_rows(
       f_cat_counts(data, "med_service"),
@@ -140,11 +183,11 @@ get_summary_table <- function(data) {
     ) |>
     mutate(
       varname = case_when(
-        varname == "med_service" ~ "Medical Service",
-        varname == "admit_src" ~ "Admission Source",
-        varname == "pat" ~ "Admitted patients",
+        varname == "med_service" ~ "Medical service",
+        varname == "admit_src" ~ "Admission source",
+        varname == "pat" ~ "Inpatient admissions",
         varname == "female" ~ "Female",
-        varname == "falls" ~ "Falls",
+        varname == "falls" ~ glue("Falls (truncated at {HOURS_MAX_STAY/24} days)"),
         varname == "age" ~ "Age",
         varname == "los" ~ "Length of stay",
         .default = varname
@@ -152,6 +195,7 @@ get_summary_table <- function(data) {
       measure = case_when(
         measure == "count" ~ "Count",
         measure == "days" ~ "Days",
+        measure == "days_truncated" ~ glue("Days (truncated at {HOURS_MAX_STAY/24} days)"),
         measure == "count_perc" ~ "Count (%)",
         measure == "medn_iqr" ~ "Median (IQR)",
         measure == "n" ~ "Count",
@@ -160,12 +204,19 @@ get_summary_table <- function(data) {
         .default = measure
       ),
       fold = ifelse(fold != "All", paste0("Hospital_", fold), fold)
-    ) |> 
+    ) |>
     pivot_wider(names_from = "fold", values_from = "value") |>
-    rename(Measure = measure, Variable = varname) |> 
-    flextable() |>
-    merge_v(j = ~Variable) |> 
-    separate_header() |> 
+    rename(Measure = measure, Variable = varname) |>
+    group_by(Variable) |>
+    mutate(is_last_val_in_group = row_number() == max(row_number())) |>
+    flextable(col_keys = c(
+      "Variable", "Measure",
+      paste0("Hospital_", 1:5),
+      "All"
+    )) |>
+    merge_v(j = ~Variable) |>
+    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) |>
+    separate_header() |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-summary.docx"))
 
   file.path(OUT_DIR, "tbl-summary.docx")
@@ -191,6 +242,7 @@ format_median_iqr <- function(x, dps) {
 
 make_short_data <- function(data) {
   data |>
+    filter(tstop <= HOURS_MAX_STAY) |>
     group_by(enc_id) |>
     mutate(falls_n = sum(fall)) |>
     slice(1) |>
@@ -207,14 +259,14 @@ f_cat_counts <- function(.data, col, val_min = 100) {
     summarize(n = n()) |>
     ungroup() |>
     (\(d) {
-      d_all <- filter(d, fold == "All") |> 
+      d_all <- filter(d, fold == "All") |>
         arrange(desc(n))
-      
+
       levels <- c(d_all[[2]][d_all[[2]] != "other"], "other")
       d[[2]] <- factor(d[[2]], levels = levels)
       d
-    })() |> 
-    arrange(!!rlang::sym(col)) |> 
+    })() |>
+    arrange(!!rlang::sym(col)) |>
     pivot_wider(names_from = all_of(col), values_from = "n") |>
     mutate(across(
       !all_of("fold"),
@@ -224,7 +276,8 @@ f_cat_counts <- function(.data, col, val_min = 100) {
     add_column(varname = col) |>
     mutate(
       measure = glue("{name} (count)"),
-      measure = str_to_sentence(measure)
+      measure = str_to_sentence(measure),
+      measure = str_replace(measure, "[p,P]sych(?=[), ])", "Psychiatry")
     ) |>
     select(-name)
 }
