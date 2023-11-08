@@ -14,7 +14,7 @@ make_model_parm_table <- function(data, final_model) {
     rownames_to_column(var = "Parameter") |>
     mutate(
       Parameter = str_remove(Parameter, ".*\\)(?=[a-z])"),
-      Parameter = str_replace_all(Parameter, "'", "\\*")
+      Parameter = str_replace_all(Parameter, "'", "")
     ) |>
     mutate(
       across(!Parameter, function(v) format(round(v, 4), nsmall = 4)),
@@ -27,7 +27,18 @@ make_model_parm_table <- function(data, final_model) {
     ) |>
     select(-starts_with("ci")) |>
     relocate("Hazard ratio", .before = last_col()) |>
-    flextable() |>
+    flextable()|>
+    footnote(
+      i = c(
+        2,3,3,4,4,4, # age
+        5,6,6,7,7,7, # time since 2018
+        24,25,25 # tstart
+      ), 
+      j = 1,
+      ref_symbols = "*",
+      value = as_paragraph("Indicates the levels for the spline terms – see supplementary appendix 2 for table of knot locations for each term."),
+      part = "body"
+    ) |> 
     save_as_docx(path = file.path(OUT_DIR, "tbl-model-coefs.docx"))
 
   rcs_terms <- final_model$coefficients |>
