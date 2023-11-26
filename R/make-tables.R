@@ -48,7 +48,7 @@ make_model_parm_table <- function(data, final_model) {
     unique()
 
 
-  lapply(
+  tbl <- lapply(
     rcs_terms,
     \(term) {
       eval(parse(text = glue("with(data, {term})")))
@@ -76,8 +76,11 @@ make_model_parm_table <- function(data, final_model) {
       "Term", "Knot Number", "Knot Location"
     )) |>
     merge_v(j = ~Term) |>
-    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) |>
-    save_as_docx(path = file.path(OUT_DIR, "tbl-knot-locations.docx"))
+    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) 
+  
+  save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-knot-locations.docx"))
+  
+  saveRDS(tbl, file.path(OUT_DIR, "tbl-knot-locations.rds"))
 
   file.path(OUT_DIR, c("tbl-knot-locations.docx", "tbl-model-coefs.docx"))
 }
@@ -106,7 +109,7 @@ get_supp_power_by_fold_table <- function(data, all_models) {
 
   final_model_params <- max(model_params)
 
-  data |>
+  tbl <- data |>
     mutate(max_time = ifelse(time_end > HOURS_MAX_STAY, HOURS_MAX_STAY, time_end)) |>
     group_by(fold) |>
     summarize(
@@ -140,8 +143,10 @@ get_supp_power_by_fold_table <- function(data, all_models) {
       ref_symbols = "*",
       value = as_paragraph("Model represents the cross-validation fold models and the final model fit with all patient data. The fold models are those fit during internal-external cross-validation and incorporate all patient data except for the associated hospital of the same number. For example, the 'Fold: 1' model was fit using patient data from hospitals 2 to 5, with hospital 1 being the validation set."),
       part = "header"
-    ) |>
-    save_as_docx(path = file.path(OUT_DIR, "tbl-power-by-fold.docx"))
+    )
+  
+  save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-power-by-fold.docx"))
+  saveRDS(tbl, file.path(OUT_DIR, "tbl-power-by-fold.rds"))
 
   file.path(OUT_DIR, "tbl-power-by-fold.docx")
 }
@@ -187,7 +192,7 @@ get_summary_table <- function(data) {
     ) |>
     select(fold, varname, measure, value)
 
-  demographics_data |>
+  tbl <- demographics_data |>
     bind_rows(
       f_cat_counts(data, "med_service"),
       f_cat_counts(data, "admit_src")
@@ -227,8 +232,10 @@ get_summary_table <- function(data) {
     )) |>
     merge_v(j = ~Variable) |>
     hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) |>
-    separate_header() |>
-    save_as_docx(path = file.path(OUT_DIR, "tbl-summary.docx"))
+    separate_header() 
+  
+  save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-summary.docx"))
+  saveRDS(tbl, file.path(OUT_DIR, "tbl-summary.rds"))
 
   file.path(OUT_DIR, "tbl-summary.docx")
 }
