@@ -26,14 +26,9 @@ presented in the (forthcoming) publication.
 
 
 ## `{targets}` workflow
-```{r, echo=FALSE}
-htmltools::tags$iframe(
-  src="targets-workflow.html",
-  width="100%", 
-  height="600",
-  scrolling="no", 
-  seamless="seamless", 
-  frameBorder="0"
-)
+
+```{r, results = "asis", echo = FALSE}
+cat(c("```mermaid", targets::tar_mermaid(), "```"), sep = "\n")
 ```
+
 
