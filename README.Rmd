@@ -28,7 +28,7 @@ presented in the (forthcoming) publication.
 ## `{targets}` workflow
 
 ```{r, results = "asis", echo = FALSE}
-cat(c("```mermaid", targets::tar_mermaid(), "```"), sep = "\n")
+cat(c("```mermaid", targets::tar_mermaid(targets_only = TRUE), "```"), sep = "\n")
 ```
 
 

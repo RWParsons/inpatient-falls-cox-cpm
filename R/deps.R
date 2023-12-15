@@ -1,1 +1,1 @@
-qs::catquo()
+zzz <- capture.output(qs::catquo())
