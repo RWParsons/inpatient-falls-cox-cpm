@@ -27,18 +27,18 @@ make_model_parm_table <- function(data, final_model) {
     ) |>
     select(-starts_with("ci")) |>
     relocate("Hazard ratio", .before = last_col()) |>
-    flextable()|>
+    flextable() |>
     footnote(
       i = c(
-        2,3,3,4,4,4, # age
-        5,6,6,7,7,7, # time since 2018
-        24,25,25 # tstart
-      ), 
+        2, 3, 3, 4, 4, 4, # age
+        5, 6, 6, 7, 7, 7, # time since 2018
+        24, 25, 25 # tstart
+      ),
       j = 1,
       ref_symbols = "*",
       value = as_paragraph("Indicates the levels for the spline terms – see supplementary appendix 2 for table of knot locations for each term."),
       part = "body"
-    ) |> 
+    ) |>
     save_as_docx(path = file.path(OUT_DIR, "tbl-model-coefs.docx"))
 
   rcs_terms <- final_model$coefficients |>
@@ -76,10 +76,10 @@ make_model_parm_table <- function(data, final_model) {
       "Term", "Knot Number", "Knot Location"
     )) |>
     merge_v(j = ~Term) |>
-    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) 
-  
+    hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default())
+
   save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-knot-locations.docx"))
-  
+
   saveRDS(tbl, file.path(OUT_DIR, "tbl-knot-locations.rds"))
 
   file.path(OUT_DIR, c("tbl-knot-locations.docx", "tbl-model-coefs.docx"))
@@ -110,11 +110,10 @@ get_supp_power_by_fold_table <- function(data, all_models) {
   final_model_params <- max(model_params)
 
   tbl <- data |>
-    mutate(max_time = ifelse(time_end > HOURS_MAX_STAY, HOURS_MAX_STAY, time_end)) |>
     group_by(fold) |>
     summarize(
       patients = n(),
-      patient_days = round(sum((max_time - tstart) / 24)),
+      patient_days = round(sum(truncated_time_end / 24)),
       falls_n = sum(falls_n)
     ) |>
     column_to_rownames(var = "fold") |>
@@ -144,7 +143,7 @@ get_supp_power_by_fold_table <- function(data, all_models) {
       value = as_paragraph("Model represents the cross-validation fold models and the final model fit with all patient data. The fold models are those fit during internal-external cross-validation and incorporate all patient data except for the associated hospital of the same number. For example, the 'Fold: 1' model was fit using patient data from hospitals 2 to 5, with hospital 1 being the validation set."),
       part = "header"
     )
-  
+
   save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-power-by-fold.docx"))
   saveRDS(tbl, file.path(OUT_DIR, "tbl-power-by-fold.rds"))
 
@@ -177,7 +176,7 @@ get_summary_table <- function(data) {
           length()
       })(.),
       grp_age_medn_iqr = format_median_iqr(age, dps = 0),
-      grp_los_medn_iqr = format_median_iqr((time_end - tstart) / 24, dps = 1),
+      grp_los_medn_iqr = format_median_iqr(time_end / 24, dps = 1),
     ) |>
     mutate(
       grp_falls_fallers = glue("{format_count(grp_falls_fallers)} ({scales::percent(grp_falls_fallers/grp_pat_count, accuracy = 0.01)})"),
@@ -232,8 +231,8 @@ get_summary_table <- function(data) {
     )) |>
     merge_v(j = ~Variable) |>
     hline(i = ~ is_last_val_in_group == TRUE, border = fp_border_default()) |>
-    separate_header() 
-  
+    separate_header()
+
   save_as_docx(tbl, path = file.path(OUT_DIR, "tbl-summary.docx"))
   saveRDS(tbl, file.path(OUT_DIR, "tbl-summary.rds"))
 
@@ -260,7 +259,7 @@ format_median_iqr <- function(x, dps) {
 
 make_short_data <- function(data) {
   data |>
-    filter(tstop <= HOURS_MAX_STAY) |>
+    mutate(truncated_time_end = ifelse(time_end > HOURS_MAX_STAY, HOURS_MAX_STAY, time_end)) |>
     group_by(enc_id) |>
     mutate(falls_n = sum(fall)) |>
     slice(1) |>

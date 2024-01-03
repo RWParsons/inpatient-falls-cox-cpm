@@ -1,0 +1,18 @@
+NB: Assuming 0.05 acceptable difference in apparent & adjusted R-squared 
+NB: Assuming 0.05 margin of error in estimation of overall risk at time point = 24  
+NB: Events per Predictor Parameter (EPP) assumes overall event rate = 0.005420945  
+ 
+             Samp_size Shrinkage Parameter    CS_Rsq Max_Rsq Nag_Rsq   EPP
+Criteria 1        1619     0.900        28 0.1429492   0.652   0.219 11.75
+Criteria 2         782     0.814        28 0.1429492   0.652   0.219  5.68
+Criteria 3 *      1619     0.900        28 0.1429492   0.652   0.219 11.75
+Final SS          1619     0.900        28 0.1429492   0.652   0.219 11.75
+ 
+ Minimum sample size required for new model development based on user inputs = 1619, 
+ corresponding to 60697.7 person-time** of follow-up, with 330 outcome events 
+ assuming an overall event rate = 0.005420945 and therefore an EPP = 11.75  
+ 
+ * 95% CI for overall risk = (0.11, 0.134), for true value of 0.122 and sample size n = 1619 
+ **where time is in the units mean follow-up time was specified in
+Mean LOS in hours (truncated): 37.4908366557136
+Falls rate (falls per admission): 0.00542094485515857

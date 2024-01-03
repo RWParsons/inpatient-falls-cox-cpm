@@ -1,11 +1,12 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
 .process_input|function|12f2981762ea2eb6|||||||||||||||
 add_common_aesthetics|function|7c8ff64d92d3be5d|||||||||||||||
-add_labs|function|deea9a78e0f0c9c1|||||||||||||||
+add_labs|function|0cb7caf1ebba06fe|||||||||||||||
 admit_src_cats|object|7ff93ee858d90fb9|||||||||||||||
 all_models|stem|7ae97ab5007a0d3a|1c02886e8793f96d|77f8e0b5ca804e54|-999233456||t19658.274087779s|91a7a22ab727b05a|616911286|qs|local|vector|||0||
 are_posixct_same_date|function|ee841d666bf45b17|||||||||||||||
-calibration_fig|stem|f4d8bbb2a47c7a26|2ed918652dc275fb|ed47369e869ba634|-1463285365|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/fig_calibration.jpeg|t19669.5351885588s|e80912a7784a7fdf|7123551|file|local|vector|||796.43|glm.fit fitted rates numerically 0 occurred. 1m22mRemoved 1 rows containing nonfinite values stat_smooth.. 1m22mRemoved 1 rows containing missing values geom_smooth.. 1m22mRemoved 3743 rows containing nonfinite values stat_smooth.. 1m22mRemoved 7 rows containing missing values geom_smooth.|
+calculate_req_sample_size|function|2fe7e2391d50deb6|||||||||||||||
+calibration_fig|stem|da7e5646cbdfced7|2ed918652dc275fb|8bbb80388b7e6341|-1463285365||t0s|f4066a65ff755f48|0|file|local|vector|||697.84|glm.fit fitted rates numerically 0 occurred. 1m22mRemoved 1 rows containing nonfinite values stat_smooth.. 1m22mRemoved 1 rows containing missing values geom_smooth.. 1m22mRemoved 3743 rows containing nonfinite values stat_smooth.. 1m22mRemoved 7 rows containing missing values geom_smooth.|
 ci.cvAUC|function|8bfcf9afd4d4c31b|||||||||||||||
 clean_term|function|605d1d83942c86ee|||||||||||||||
 convert_to_AEST|function|a00a98f27654a602|||||||||||||||
@@ -13,7 +14,7 @@ create_tdc_data|function|aa4cdd45f46c7c27|||||||||||||||
 d_encounters|stem|6c604dbb4edff83b|14570b61daf99f03|68a92832e8d43cb5|-1337418212||t19658.2593830514s|764b92a74d9b7506|37915349|qs|local|vector|||94.5||
 d_model|stem|f2ea83404a6ef090|990a0d3fbdf2c615|9904de0aca158739|1725336152||t19658.2600433981s|b22ff24aedbb7d80|59818940|qs|local|vector|||54.719||
 d_riskman|stem|c7f2430c05da6104|81715f4ef158e961|5759c2621bcac1fe|-575854837||t19654.2383766667s|52808f6920272dad|79237|qs|local|vector|||1.45||
-d_short|stem|dea5f43f2ad4d950|996714981598654d|a8c6b85325809f4d|-832235762||t19668.4608800744s|863b2e9e4758d5e9|64145776|qs|local|vector|||62.953||
+d_short|stem|45a95c726257c5fa|996714981598654d|a98b15a27556a21a|-832235762||t19725.6932808101s|32e8852fce8dddef|76649267|qs|local|vector|||62.69||
 d1_troc|stem|83f6855f7dadf67e|1c224145a91b220f|5acff349819ee99e|-519561473||t19658.2763691261s|0570516d48eb4a46|28739739|qs|local|vector|||6.203||
 d2_troc|stem|662c2921edb68409|fdeafdbf43e484e5|5acff349819ee99e|1078489496||t19658.2762926902s|512cfc5385f96496|29926788|qs|local|vector|||6.094||
 d3_troc|stem|43be1637a5f51f25|f315f69caa7587c8|5acff349819ee99e|-900540302||t19658.2764449843s|a6d13594b73fc89f|30480681|qs|local|vector|||6.14||
@@ -37,19 +38,22 @@ full_model|stem|e827395fb67cee8c|addf935a628d0ad9|dfd84c1b08df735f|1462176613||t
 fx_med_service|function|5bb88a218c5ea9f5|||||||||||||||
 fx_troc|function|44e406719d5e4a01|||||||||||||||
 fx_visit_reason|function|bad8084c961e047e|||||||||||||||
+get_D_from_c|function|fb8f3ea0588438cc|||||||||||||||
 get_legend|function|1e0319d4afc7e8e4|||||||||||||||
 get_preds|function|f3d2f0e9a68f19a6|||||||||||||||
-get_summary_table|function|85e9262bd8c12550|||||||||||||||
-get_supp_power_by_fold_table|function|29b3468526f17e3c|||||||||||||||
+get_r2_from_c|function|a3922adec39f6bf9|||||||||||||||
+get_r2_from_D|function|b06f0988daf1e7b8|||||||||||||||
+get_summary_table|function|42e201eb73705b3b|||||||||||||||
+get_supp_power_by_fold_table|function|c2f074550e1a8e9c|||||||||||||||
 get_trocs|function|9dc2cfed53528fe9|||||||||||||||
 glue|function|24cc58837199536d|||||||||||||||
 HOURS_MAX_STAY|object|29b7562759c60885|||||||||||||||
-make_model_calibration_fig|function|fd5598b5543914a4|||||||||||||||
+make_model_calibration_fig|function|571bbfd0a83da5ae|||||||||||||||
 make_model_discrimination_fig|function|e0b810af2dd95c7b|||||||||||||||
 make_model_parm_table|function|31b538b15451e3ca|||||||||||||||
 make_plot_troc_day|function|59910a27077e4646|||||||||||||||
 make_plot_troc_series|function|3bdad2b2fe8e65c5|||||||||||||||
-make_short_data|function|875b4660967ab20d|||||||||||||||
+make_short_data|function|4603cbf17c7d41ce|||||||||||||||
 make_troc|function|2244f200618ddfd6|||||||||||||||
 model|stem|00f0e43d43ff1a5a|ae83bc723fe2997c|eaba6bd174f49b10|1816327236||t19654.2394770708s|abbdb7fe746336f0|76|qs|local|vector|||0||
 MODEL_FORMULA|object|7062afdd8b4fe566|||||||||||||||
@@ -63,12 +67,14 @@ OUT_DIR|object|9e05dab7a8c18d0b|||||||||||||||
 plot_grid|function|e2ad70c97de79c07|||||||||||||||
 read_encounters|function|734d68a7525f532e|||||||||||||||
 read_riskman|function|098d7a271db45450|||||||||||||||
+required_sample_size|stem|4bf1c387574f2a73|9820977d27c57939|bc7d0e2ce365276c|1837606045|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/sample-size.txt|t19725.7239980925s|0e641db36dbe9518|1147|file|local|vector|||0.99||
 riskman_file|stem|7a3e195b4dc960fc|e6282aa7bcdca3bd|1ace38bcf8f3ba2e|382934515||t19654.2382854524s|7dead8e41ac4f62d|130|qs|local|vector|||1.23||
-summary_table|stem|8e047fb4d8bd0a06|bae39e77291d542d|c7e3914d8e37b0bf|782889970|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/tbl-summary.docx|t19687.4870486221s|6f8c61a9070bfcfa|16394|file|local|vector|||2.78||
-supp_power_by_fold_table|stem|9f953d6ba90081db|47601731e130b9f0|dff3f70964f2babb|-712055547|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/tbl-power-by-fold.docx|t19687.4876877958s|9325c1ccd26acf5d|14040|file|local|vector|||0.91||
+summary_table|stem|b513ed92b94d426f|bae39e77291d542d|4a859a8ff498e498|782889970|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/tbl-summary.docx|t19725.6937823504s|6f8c61a9070bfcfa|16394|file|local|vector|||2.71||
+supp_power_by_fold_table|stem|4369f9557723106a|47601731e130b9f0|fd57a2ef33b51d49|-712055547|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/tbl-power-by-fold.docx|t19725.6962486915s|9325c1ccd26acf5d|14040|file|local|vector|||0.82||
 TABLES_UNPROCESSED_DIR|object|e11d972fa619ad8a|||||||||||||||
 TIME_HOURS_SPLIT|object|c476f3c65cb413c0|||||||||||||||
 troc_fig|stem|6a3666acc59fa9ba|5031293465a0eee2|2493caed34249302|-370109959|C:/Users/n10891277/R_projects/inpatient-falls-cox-cpm/output/fig_discrimination.jpeg|t19669.5373718819s|12442b89fb2b6917|19061197|file|local|vector|||187.18||
 trocs|stem|6af12f7830c46a02|5031293465a0eee2|3b300b8c983c4edf|-1504739049|C:/Users/Rex/Documents/R_projects/inpatient-falls-cox-cpm/output/fig_discrimination.jpeg|t19655.5012974924s|cd68576e0ad20ba7|19171585|file|local|vector|||18.08|1m22mRemoved 5 rows containing missing values geom_line.|
 valid1|stem||d6731e0d667d906c|be065ea1043cf6bd|1112433666||t19654.4963312307s||0|qs|local|vector|||12.82||object train not found
 vertically_average|function|6426dca51c5770f7|||||||||||||||
+zzz|object|a0504f978b53f2fd|||||||||||||||

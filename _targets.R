@@ -208,5 +208,10 @@ list(
       final_model = final_model
     ),
     format = "file"
+  ),
+  tar_target(
+    required_sample_size,
+    calculate_req_sample_size(d_short),
+    format = "file"
   )
 )
