@@ -33,14 +33,8 @@ make_model_discrimination_fig <- function(trocs) {
 
   fig <- plot_grid(top_grid, bottom_grid, nrow = 2) +
     theme(panel.background = element_rect(fill = "white", colour = "white"))
-
-  ggsave(
-    filename = file.path(OUT_DIR, "fig_discrimination.jpeg"),
-    height = 8,
-    width = 20,
-    dpi = 1200
-  )
-  file.path(OUT_DIR, "fig_discrimination.jpeg")
+  
+  fig
 }
 
 make_plot_troc_day <- function(troc, predict_day) {

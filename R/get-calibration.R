@@ -27,15 +27,18 @@ make_model_calibration_fig <- function(model_list) {
 
   zoom_ecdf <- list(x = c(0, 0.015), y = c(0, 1))
   x_max <- 4
-  p_data <- mutate(combined_data, fold = as.factor(fold))
-
+  
+  p_data <- mutate(combined_data, fold = as.factor(fold)) 
+  
+  ecdf_ylab <- "\nEmpirical Cumulative Distribution Function"
+  
   message("making ecdf plot")
   p_ecdf <-
     p_data |>
     ggplot(aes(x_var, col = fold, group = fold)) +
     stat_ecdf(geom = "step") +
     add_labs() +
-    ylab("\nEmpirical Cumulative Distribution Function") +
+    ylab(ecdf_ylab) +
     annotate(
       "rect",
       xmin = zoom_ecdf$x[1], xmax = zoom_ecdf$x[2],
@@ -68,7 +71,7 @@ make_model_calibration_fig <- function(model_list) {
     geom_line() +
     scale_x_continuous(limits = zoom_ecdf$x) +
     add_labs() +
-    ylab("\nEmpirical Cumulative Distribution Function") +
+    ylab(ecdf_ylab) +
     add_common_aesthetics()
 
   grid_ecdf <- plot_grid(p_ecdf, p_ecdf_zoom, labels = c("A", "C"), ncol = 1)
@@ -112,19 +115,15 @@ make_model_calibration_fig <- function(model_list) {
   ) +
     theme(plot.background = element_rect(fill = "white", colour = NA))
 
-  ggsave(
-    filename = file.path(OUT_DIR, "fig_calibration.jpeg"),
-    height = 8, width = 8,
-    dpi = 1200
-  )
-  file.path(OUT_DIR, "fig_calibration.jpeg")
+  
+  calibration_plot
 }
 
 add_labs <- function() {
   list(
     labs(
       x = "Cumulative hazard: Cox regression\n(predicted)",
-      y = "Cumulative hazard: Poisson regression\n(observed)",
+      y = "\nCumulative hazard: Poisson regression\n(observed)",
       col = "Fold",
       group = "Fold"
     )

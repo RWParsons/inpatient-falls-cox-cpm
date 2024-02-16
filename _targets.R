@@ -160,23 +160,45 @@ list(
   ),
   tar_target(
     troc_fig,
-    make_model_discrimination_fig(
-      trocs = list(
-        d1_troc,
-        d2_troc,
-        d3_troc,
-        d4_troc,
-        d5_troc,
-        d6_troc,
-        d7_troc
+    ggplotGrob(
+      make_model_discrimination_fig(
+        trocs = list(
+          d1_troc,
+          d2_troc,
+          d3_troc,
+          d4_troc,
+          d5_troc,
+          d6_troc,
+          d7_troc
+        )
       )
+    )
+  ),
+  tar_target(
+    calibration_fig,
+    ggplotGrob(
+      make_model_calibration_fig(
+        model_list = all_models
+      )
+    )
+  ),
+  
+  # save figures
+  tar_target(
+    troc_fig_out,
+    draw_fig(
+      troc_fig, 
+      file.path(OUT_DIR, "fig_discrimination.jpeg"),
+      height = 8, width = 20, dpi = 600
     ),
     format = "file"
   ),
   tar_target(
-    calibration_fig,
-    make_model_calibration_fig(
-      model_list = all_models
+    calibration_fig_out,
+    draw_fig(
+      calibration_fig, 
+      file.path(OUT_DIR, "fig_calibration.jpeg"),
+      height = 7.5, width = 7.5, dpi = 600
     ),
     format = "file"
   ),
