@@ -22,11 +22,14 @@ list(
   tar_target(
     encounters_file,
     file.path(TABLES_UNPROCESSED_DIR, "Encounters_Data.parquet"),
-    format = "file"
+    format = "file",
+    cue = tar_cue(mode = "never")
   ),
   tar_target(
     riskman_file,
-    file.path(TABLES_UNPROCESSED_DIR, "RISKMAN_Falls.parquet")
+    file.path(TABLES_UNPROCESSED_DIR, "RISKMAN_Falls.parquet"),
+    format = "file",
+    cue = tar_cue(mode = "never")
   ),
 
 
