@@ -30,7 +30,7 @@ make_model_calibration_fig <- function(model_list) {
   
   p_data <- mutate(combined_data, fold = as.factor(fold)) 
   
-  ecdf_ylab <- "\nEmpirical Cumulative Distribution Function"
+  ecdf_ylab <- "\nEmpirical cumulative distribution function"
   
   message("making ecdf plot")
   p_ecdf <-
